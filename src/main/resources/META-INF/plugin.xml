@@ -1,0 +1,63 @@
+<idea-plugin>
+    <id>com.umain.branchchanges</id>
+    <name>Branch Changes</name>
+    <version>1.0.0</version>
+    <vendor url="https://www.umain.com">Umain</vendor>
+
+    <description><![CDATA[
+    <p>See every file your Git branch has touched in one place, and spot the new ones at a glance, even after you've committed.</p>
+
+    <p>Adds a <b>Branch Changes</b> view to the Project tool window's view dropdown, next to "All Changed Files".
+    It shows the normal project tree, filtered to the files added or modified on your current branch.</p>
+
+    <ul>
+      <li><b>Whole branch, not just uncommitted work:</b> it compares against the point where your branch split off,
+          so it includes committed, staged, unstaged and untracked files. Deleted files are left out.</li>
+      <li><b>New files highlighted:</b> files that didn't exist when the branch started get a green name and a
+          "new" label in every Project view.</li>
+      <li><b>Automatic base branch:</b> uses <code>origin/HEAD</code>, or else <code>main</code>, <code>master</code>
+          or <code>develop</code>. You can pick another under <b>Git &gt; Branch Changes: Set Base Branch…</b></li>
+      <li><b>Always up to date:</b> refreshes as you edit, commit, switch branches or fetch.</li>
+      <li><b>Works with scopes:</b> also available wherever you choose a scope, such as Find in Files.</li>
+    </ul>
+
+    <p>Works in Android Studio, IntelliJ IDEA and other JetBrains IDEs with the bundled Git plugin.
+    Supports projects with several Git roots.</p>
+
+    <p>Developed by Karthik Umashankar at Umain.</p>
+    ]]></description>
+
+    <change-notes><![CDATA[
+    <p><b>1.0.0</b></p>
+    <ul>
+      <li>First release: the Branch Changes view, highlighting of new files, and choosing the base branch.</li>
+    </ul>
+    ]]></change-notes>
+
+    <idea-version since-build="242"/>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>Git4Idea</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <customScopesProvider implementation="com.umain.branchchanges.BranchChangesScopesProvider"/>
+        <postStartupActivity implementation="com.umain.branchchanges.BranchChangesStartup"/>
+        <projectViewNodeDecorator implementation="com.umain.branchchanges.NewFileDecorator"/>
+    </extensions>
+
+    <projectListeners>
+        <listener class="com.umain.branchchanges.BranchChangesGitListener"
+                  topic="git4idea.repo.GitRepositoryChangeListener"/>
+        <listener class="com.umain.branchchanges.BranchChangesChangeListListener"
+                  topic="com.intellij.openapi.vcs.changes.ChangeListListener"/>
+    </projectListeners>
+
+    <actions>
+        <action id="BranchChanges.SetBase"
+                class="com.umain.branchchanges.SetBaseBranchAction"
+                text="Branch Changes: Set Base Branch…"
+                description="Choose which branch the Branch Changes view compares against">
+            <add-to-group group-id="Git.MainMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
